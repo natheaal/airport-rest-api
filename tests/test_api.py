@@ -10,7 +10,7 @@ def test_get_aeroporti_pagination():
 
 def test_create_aeroporto_unauthorized():
     response = client.post("/aeroporti", json={"codice": "LIN", "citta": "Milano"})
-    assert response.status_code == 422 # Manca l'header Authorization
+    assert response.status_code == 422 
 
 def test_create_aeroporto_authorized():
     headers = {"Authorization": "Bearer mio-token-segreto"}
