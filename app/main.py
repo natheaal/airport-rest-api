@@ -15,7 +15,7 @@ class Aeroporto(AeroportoBase):
 class PaginatedAeroporti(BaseModel):
     page: int
     size: int
-    total_pages: int
+    total: int
     data: List[Aeroporto]
 
 db_aeroporti = [
@@ -30,22 +30,21 @@ def verify_token(authorization: str = Header(...)):
         raise HTTPException(status_code=401, detail="Non autorizzato")
     return authorization
 
-
 @app.get("/aeroporti", response_model=PaginatedAeroporti)
 def get_aeroporti(page: int = Query(1, ge=1), size: int = Query(5, ge=1)):
     start = (page - 1) * size
     end = start + size
     data = db_aeroporti[start:end]
-    total_pages = math.ceil(len(db_aeroporti) / size)
+    total_pages = math.ceil(len(db_aeroporti) / size) if db_aeroporti else 0
     
     return {
         "page": page,
         "size": size,
-        "total_pages": total_pages,
+        "total": total_pages,
         "data": data
     }
 
-@app.get("/aeroporti/{id}", response_model=AeroportoBase)
+@app.get("/aeroporti/{id}", response_model=Aeroporto)
 def get_aeroporto(id: int):
     for a in db_aeroporti:
         if a["id"] == id:
@@ -60,7 +59,7 @@ def create_aeroporto(a: AeroportoBase, token: str = Depends(verify_token)):
     id_counter += 1
     return new_aeroporto
 
-@app.delete("/aeroporto/{id}", status_code=204) 
+@app.delete("/aeroporti/{id}", status_code=204)
 def delete_aeroporto(id: int, token: str = Depends(verify_token)):
     global db_aeroporti
     initial_len = len(db_aeroporti)
@@ -68,17 +67,6 @@ def delete_aeroporto(id: int, token: str = Depends(verify_token)):
     if len(db_aeroporti) == initial_len:
         raise HTTPException(status_code=404, detail="Aeroporto non trovato")
     return None
-
-
-
-
-
-
-
-
-
-
-
 
 
 
