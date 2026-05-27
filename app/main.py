@@ -60,7 +60,7 @@ def create_aeroporto(a: AeroportoBase, token: str = Depends(verify_token)):
     id_counter += 1
     return new_aeroporto
 
-@app.delete("/aeroporto/{id}", status_code=204) # Nota: path richiesto dalla consegna
+@app.delete("/aeroporto/{id}", status_code=204) 
 def delete_aeroporto(id: int, token: str = Depends(verify_token)):
     global db_aeroporti
     initial_len = len(db_aeroporti)
